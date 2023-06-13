@@ -19,6 +19,7 @@ The hash function used here is called Poseidon Hash. It is canonical to use this
 """
 
 import hashlib
+import json
 
 from utils.common import ACCT_PRECISION_DICT, BITCOIN_TOKEN, ETHER_TOKEN, FIELD_SCALAR_BITS, get_balance_orders, int_to_bin, split_into_chunks
 from utils.scaling import account_precision_to_proof_precision
@@ -165,3 +166,18 @@ def verify_receipt(r: dict, balance_orders=None, log_verbose=True):
                 "----------------------------------------------------------------")
 
     return (correct_account_id, merkle_branch_valid)
+
+
+def test_sample_receipt():
+    FILENAME = "sample_files/sample-receipt.json"
+    with open(FILENAME) as f:
+        receipt: dict = json.load(f)
+    (correct_account_id, merkle_branch_valid) = verify_receipt(receipt)
+    assert correct_account_id, f"Account ID is incorrect"
+    assert merkle_branch_valid, f"Merkle branch is invalid"
+    print(
+        f"SUCCESS!! Receipt is valid, the claimed balance for the claimed accountID was included in a proof whose merkle root was {receipt['merkle_root']}")
+
+
+if __name__ == '__main__':
+    test_sample_receipt()

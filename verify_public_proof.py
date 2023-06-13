@@ -13,7 +13,9 @@ Using the Liabilities Proof Outputs and the Assets Proof Outputs, the verifier c
 If we trust the public inputs, then we can use math to verify that the top level proof is valid. The mathematical properties that check whether a ZK Proof of Solvency is valid for a specific
 final hash value is checked in a smart contract on the Ethereum blockchain for convenience.
 
+Here is a link to that smart contract: https://etherscan.io/address/0xa3965810538b8b688e3ca06c2f188b74b397854a
 """
+import json
 from utils.common import int_to_regs
 from utils.poseidon.poseidon_hash import poseidon_hash
 
@@ -115,3 +117,19 @@ def hash_asset_pub_outputs(assets_pub_outputs: dict, print_fn) -> int:
         [revealed_agg_hash_assetrec, hashed_vkey_asset_rec], arity)
     print_fn(f"Assets Hash Result: {result}")
     return result
+
+
+def test_sample_proof_public_outputs_metadata():
+    SAMPLE_FILE = "sample_files/sample_proof_public_outputs_metadata.json"
+    # Load json into a dict
+    with open(SAMPLE_FILE) as f:
+        sample_proof_public_outputs_metadata = json.load(f)
+    computed_hash: int = hash_pub_outputs(sample_proof_public_outputs_metadata)
+    target_hash: int = sample_proof_public_outputs_metadata["target_pubhash"]
+    assert computed_hash == target_hash, f"Computed hash {computed_hash} does not match target hash {target_hash}"
+    print(
+        f"The ZK-solvency proof that uses the target hash {target_hash} did indeed use the public outputs specified by {sample_proof_public_outputs_metadata}")
+
+
+if __name__ == '__main__':
+    test_sample_proof_public_outputs_metadata()

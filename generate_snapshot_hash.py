@@ -12,6 +12,8 @@ Then the verifier must also check that these snapshots are indeed the ones the p
 in their revealed public outputs.
 
 The hash function used here is called Poseidon Hash. It is canonical to use this hash function in ZK-SNARKs because it is very efficient to compute inside the SNARK.
+
+NOTE: Taking the hash of a snapshot can take up to an hour. There is a lot of computation required.
 """
 
 from dataclasses import dataclass
@@ -67,6 +69,18 @@ def make_address_integer_regs(address: str, anonset_type: AnonsetType) -> list[i
             f"ERROR: Unknown or Unsupported anonset_type {anonset_type}. Should be BTC_PUBKEY or BTC_SCRIPT or ETH")
 
 
+def get_address_len(anonset_type: AnonsetType) -> int:
+    if anonset_type == AnonsetType.BTC_PUBKEY:
+        return 1
+    elif anonset_type == AnonsetType.BTC_SCRIPT:
+        return 2
+    elif anonset_type == AnonsetType.ETH:
+        return 1
+    else:
+        raise Exception(
+            f"ERROR: Unknown or Unsupported anonset_type {anonset_type}. Should be BTC_PUBKEY or BTC_SCRIPT or ETH")
+
+
 def get_anonset_hash(anonset: list[PublicAddressInfo], anonset_type: AnonsetType, npubaddrs: int, balanceDimension: int = BALANCE_DIMENSION) -> int:
     print_verbose(
         f"Inside get_anonset_hash. anonset length: {len(anonset)} anonset_type: {anonset_type} npubaddrs: {npubaddrs} balanceDimension: {balanceDimension}")
@@ -91,7 +105,7 @@ def get_anonset_hash(anonset: list[PublicAddressInfo], anonset_type: AnonsetType
 
     # Step 2 hash anonset addresses
     anonset_addresses: list[list[int]] = []
-    address_len = None
+    address_len = get_address_len(anonset_type)
     for ii in range(npubaddrs):
         address_int_regs: list[int] = make_address_integer_regs(
             anonset[ii].address, anonset_type)
@@ -107,3 +121,33 @@ def get_anonset_hash(anonset: list[PublicAddressInfo], anonset_type: AnonsetType
     result: int = poseidon_hash([balances_hash, addrs_hash], 2)
     print_verbose(f"result: {result}")
     return result
+
+
+def test_eth_snapshot_hash():
+    FILENAME = "sample_files/sample_eth_snapshot.csv"
+    anonset_type = AnonsetType.ETH
+
+    # Read all lines of the snapshot file
+    pub_addr_info_list: list[PublicAddressInfo] = []
+    with open(FILENAME, "r") as f:
+        lines = f.readlines()
+        for line in lines:
+            line = line.strip()
+            if line.startswith("#"):
+                continue
+            parts = line.split(",")
+            assert len(parts) == BALANCE_DIMENSION + \
+                1, f"ERROR: Line {line} does not have {BALANCE_DIMENSION + 1} parts. It has {len(parts)} parts."
+            address = parts[0]
+            balances = [int(x) for x in parts[1:]]
+            pub_addr_info_list.append(
+                PublicAddressInfo(address=address, balances=balances))
+
+    # Compute the hash
+    anonset_hash: int = get_anonset_hash(
+        pub_addr_info_list, anonset_type, len(pub_addr_info_list))
+    print(f"ETH Anonset Hash: {anonset_hash}")
+
+
+if __name__ == '__main__':
+    test_eth_snapshot_hash()

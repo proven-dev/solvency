@@ -1,4 +1,4 @@
-This repo contains code that allows people to independently verify the correctness of a Proof of Solvency using the ZeKnow Solv Protocol by Proven. All of this functionality is also available at our website: www.solvenscan.io
+This repo contains code that allows people to independently verify the correctness of a Proof of Solvency using the ZeKnow Solv Protocol by Proven. All of this functionality is also available at our Solvenscan website: www.solvenscan.io
 
 Summary:
 The ZeKnow Solv Protocol constructs a ZK-SNARK where the prover shows that its Total Assets >= Total Liabilities without revealing any additional information. The way this works at a high-level is outlined here:
@@ -32,14 +32,14 @@ VERIFY THE PUBLIC OUTPUTS VERACITY:
 
 - Randomly check some addresses in the snapshot files. Make sure that their corresponding balances do match
   what they ought to be.
-  (Code to help automate this is coming soon, for now it is manual)
+  (Code to help automate this is coming soon)
 
 ---
 
 VERIFY THE ZK SNARK PROOF USING THE PUBLIC OUTPUTS
 
 - Use the generate_snapshot_hash.py file to calculate the expected snapshot hashes that would be used in the Proof of Assets
-- Ensure that the verifying key hashes in the public outputs file match what Proven has committed they ought to be (coming soon)
+- Ensure that the verifying key hashes in the public outputs file match what Proven has committed they ought to be (this can be found on Solvenscan)
 - Use verify_public_outputs.py to check that these human readable public outputs hash to the single public-input that the top level ZK SNARK used (target_pubhash).
 - Use verify_proof.py with the top-SNARK verifying key, SNARK Proof Object, and Public Input to verify the ZK SNARK Proof itself is valid.
 

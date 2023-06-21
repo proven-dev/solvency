@@ -74,7 +74,7 @@ def get_account_info_packed(account_id: int, balances: list[int]) -> list[int]:
             [_pack_balance(chunk) for chunk in split_into_chunks(balances, ACCT_BALANCES_PER_ELT)])
 
 
-def verify_receipt(r: dict, balance_orders=None, log_verbose=True):
+def verify_receipt(r: dict, balance_orders=None):
     '''
     Inputs: r: Receipt
     Inputs: balance_orders: List of tokens
@@ -96,6 +96,7 @@ def verify_receipt(r: dict, balance_orders=None, log_verbose=True):
         _calculate_account_id(r["username"], r["nonce"]))
     correct_account_id: bool = (expected_account_id == r["account_id"])
     if not correct_account_id:
+        print_verbose(f"ERROR in Account ID")
         print_verbose(f"Expected Account ID is: {expected_account_id}")
         print_verbose(f"Actual Account ID is: {r['account_id']}")
 
@@ -110,10 +111,9 @@ def verify_receipt(r: dict, balance_orders=None, log_verbose=True):
     for balance_entry in r['balances']:
         balance_map[balance_entry['token']] = unformat_balance_value_from_receipt(
             balance_entry['token'], balance_entry['balance'])
-    if log_verbose:
-        print_verbose(f"Inside Verify Receipt. Balance map is {balance_map}")
-        print_verbose(
-            f"Inside Verify Receipt. Balance orders is {balance_orders},  and len is {len(balance_orders)}")
+    print_verbose(f"Inside Verify Receipt. Balance map is {balance_map}")
+    print_verbose(
+        f"Inside Verify Receipt. Balance orders is {balance_orders},  and len is {len(balance_orders)}")
 
     receipt_raw_balances: list[int] = [
         int(balance_map.get(bal_type, 0)) for bal_type in balance_orders]

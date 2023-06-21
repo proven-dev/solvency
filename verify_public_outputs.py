@@ -120,7 +120,7 @@ def hash_asset_pub_outputs(assets_pub_outputs: dict, print_fn) -> int:
 
 
 def test_sample_proof_public_outputs_metadata():
-    SAMPLE_FILE = "sample_files/sample_proof_public_outputs_metadata.json"
+    SAMPLE_FILE = "sample_files/sample_public_outputs.json"
     # Load json into a dict
     with open(SAMPLE_FILE) as f:
         sample_proof_public_outputs_metadata = json.load(f)
@@ -129,6 +129,7 @@ def test_sample_proof_public_outputs_metadata():
     assert computed_hash == target_hash, f"Computed hash {computed_hash} does not match target hash {target_hash}"
     print(
         f"The ZK-solvency proof that uses the target hash {target_hash} did indeed use the public outputs specified by {sample_proof_public_outputs_metadata}")
+    print(f"SUCCESS!!")
 
 
 if __name__ == '__main__':

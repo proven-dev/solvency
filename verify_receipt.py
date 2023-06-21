@@ -169,12 +169,13 @@ def verify_receipt(r: dict, balance_orders=None):
 
 
 def test_sample_receipt():
-    FILENAME = "sample_files/sample-receipt.json"
+    FILENAME = "sample_files/sample_receipt.json"
     with open(FILENAME) as f:
         receipt: dict = json.load(f)
     (correct_account_id, merkle_branch_valid) = verify_receipt(receipt)
     assert correct_account_id, f"Account ID is incorrect"
     assert merkle_branch_valid, f"Merkle branch is invalid"
+    print()
     print(
         f"SUCCESS!! Receipt is valid, the claimed balance for the claimed accountID was included in a proof whose merkle root was {receipt['merkle_root']}")
 

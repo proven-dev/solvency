@@ -129,6 +129,7 @@ def test_sample_proof_public_outputs_metadata():
     assert computed_hash == target_hash, f"Computed hash {computed_hash} does not match target hash {target_hash}"
     print(
         f"The ZK-solvency proof that uses the target hash {target_hash} did indeed use the public outputs specified by {sample_proof_public_outputs_metadata}")
+    print()
     print(f"SUCCESS!!")
 
 

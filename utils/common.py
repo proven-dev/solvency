@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 BALANCE_DIMENSION = 18
 BITCOIN_TOKEN = "BTC"
 ETHER_TOKEN = "ETH"
